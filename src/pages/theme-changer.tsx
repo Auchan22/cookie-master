@@ -12,8 +12,10 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import Cookies from 'js-cookie';
 
-const ThemeChangerPage: NextPage = () => {
+const ThemeChangerPage: NextPage = (props) => {
   const [currentTheme, setCurrentTheme] = useState<string>('light');
+
+  console.log({ props });
 
   const onThemeChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCurrentTheme(e.target.value);
@@ -45,6 +47,20 @@ const ThemeChangerPage: NextPage = () => {
       </CardContent>
     </Card>
   );
+};
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+import { GetServerSideProps } from 'next';
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const { theme = 'light' } = req.cookies;
+
+  return {
+    props: {
+      theme,
+    },
+  };
 };
 
 export default ThemeChangerPage;
