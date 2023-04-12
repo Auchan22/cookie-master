@@ -8,15 +8,19 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { NextPage } from 'next';
+import { NextPage, GetServerSideProps } from 'next';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
-const ThemeChangerPage: NextPage = (props) => {
-  const [currentTheme, setCurrentTheme] = useState<string>('light');
+type validTheme = 'light' | 'dark' | 'custom';
+interface Props {
+  theme: validTheme;
+}
 
-  console.log({ props });
+const ThemeChangerPage: NextPage<Props> = ({ theme }) => {
+  const [currentTheme, setCurrentTheme] = useState<string>(theme);
 
   const onThemeChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCurrentTheme(e.target.value);
@@ -59,16 +63,15 @@ const ThemeChangerPage: NextPage = (props) => {
 
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
-import { GetServerSideProps } from 'next';
-import { Cookie } from 'next/font/google';
-import axios from 'axios';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const { theme = 'light' } = req.cookies;
 
+  const validThemes = ['light', 'dark', 'custom'];
+
   return {
     props: {
-      theme,
+      theme: validThemes.includes(theme) ? theme : 'light',
     },
   };
 };
