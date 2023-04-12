@@ -1,12 +1,19 @@
 import { Layout } from '@/components/layouts';
 import { customTheme, darkTheme, lightTheme } from '@/themes';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { CssBaseline, Theme, ThemeProvider } from '@mui/material';
 import type { AppContext, AppProps } from 'next/app';
 
-export default function App({ Component, pageProps, ...rest }: AppProps) {
-  console.log({ rest });
+interface Props extends AppProps {
+  theme: string;
+}
+export default function App({ Component, pageProps, theme }: Props) {
+  // console.log({ theme });
+
+  const currentTheme: Theme =
+    theme === 'light' ? lightTheme : theme === 'dark' ? darkTheme : customTheme;
+
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={currentTheme}>
       <Layout>
         <CssBaseline />
         <Component {...pageProps} />
@@ -19,7 +26,7 @@ App.getInitialProps = async (appContext: AppContext) => {
   const { theme } = appContext.ctx.req
     ? (appContext.ctx.req as any).cookies
     : { theme: 'light' };
-  // console.log(cookies);
+  // console.log(theme);
 
   const validThemes = ['light', 'dark', 'custom'];
 
