@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   CardContent,
   FormControl,
@@ -23,10 +24,16 @@ const ThemeChangerPage: NextPage = (props) => {
     Cookies.set('theme', e.target.value);
   };
 
+  const handleClick = async () => {
+    const { data } = await axios.get('/api/hello');
+    console.log(data);
+  };
+
   //Las cookies tienen solo 4k de almacenamiento, pero permiten enviarlas al back en requestTime
 
   useEffect(() => {
-    console.log(localStorage.getItem('theme'));
+    // console.log(localStorage.getItem('theme'));
+    console.log('Cookies: ', Cookies.get('theme'));
   }, []);
 
   return (
@@ -44,6 +51,7 @@ const ThemeChangerPage: NextPage = (props) => {
             />
           </RadioGroup>
         </FormControl>
+        <Button onClick={handleClick}>Request</Button>
       </CardContent>
     </Card>
   );
@@ -52,6 +60,8 @@ const ThemeChangerPage: NextPage = (props) => {
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
 import { GetServerSideProps } from 'next';
+import { Cookie } from 'next/font/google';
+import axios from 'axios';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const { theme = 'light' } = req.cookies;
